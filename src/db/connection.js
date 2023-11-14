@@ -1,8 +1,8 @@
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 
-main().catch(err => console.log(err));
+const URL = process.env.DATABASE;
 
-async function main() {
-  await mongoose.connect('mongodb://127.0.0.1:27017/crud');
-  console.log("Database connection is ready");
-}
+mongoose
+  .connect(URL)
+  .then(console.log("Connection is succesful"))
+  .catch((error) => console.log(error));

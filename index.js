@@ -1,48 +1,46 @@
 const express = require("express");
+const dotenv = require("dotenv");
 const cors = require("cors");
 const app = express();
-const PORT = process.env.PORT || 3001;
+const PORT = process.env.DATABASE || 3001;
 
-require("./src/db/connection");
+dotenv.config({ path: "./config.env" });
+
+const mongoose = require("mongoose");
+
+const URL = process.env.DATABASE;
+
+mongoose
+  .connect(URL)
+  .then(console.log("Connection is succesful"))
+  .catch((error) => console.log(error));
+
 const UserData = require("./src/modules/users");
+
 app.use(cors());
 app.use(express.json());
 
-// addData();
-// async function addData() {
-//   const newUser = new UserData({
-//     name: "Vish Dukane",
-//     email: "vish@example.com",
-//   });
 
-//   // Save the new user to the database
-//   await newUser
-//     .save()
-//     .then((savedUser) => {
-//       console.log("User saved:", savedUser);
-//     })
-//     .catch((error) => {
-//       console.error("Error saving user:", error);
-//     });
-// }
 
-// app.get("/userdata", function (req, res) {
-//   UserData.find()
-//     .then((data) => res.json(data))
-//     .catch((err) => console.log(err));
+// UserData.create({
+//   name:"Vishal Dukane",
+//   email: "vish@gmai.com"
 // });
 
-app.get("/userdata", async (req, res) => {
+
+app.get("/get", async (req, res) => {
   try {
     const userData = await UserData.find();
+    console.log("Fetched data:", userData);
     res.json(userData);
-    console.log(userData);
   } catch (error) {
-    console.log("Error found in adding ", error);
+    console.error("Error fetching users:", error);
+    res.status(500).json({ error: "Error fetching users" });
   }
 });
 
-app.post("/createUser", async (req, res) => {
+
+app.post("/create", async (req, res) => {
   try {
     const userData = await UserData.create(req.body);
     res.json(userData);
